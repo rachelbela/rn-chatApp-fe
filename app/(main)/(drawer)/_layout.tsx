@@ -56,7 +56,7 @@ export default function Layout() {
               color: string;
               focused: boolean;
             }) => <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-                {props.focused ? <Ionicons name="images" size={24} color={props.color} /> : <Ionicons name="images-outline" size={24} color="black" />}
+                {props.focused ? <Ionicons name="images" size={24} color={props.color} /> : <Ionicons name="images-outline" size={24} color={props.color} />}
                 <Text style={{ color: props.color }}>Images</Text>
               </View>,
             title: 'Image',

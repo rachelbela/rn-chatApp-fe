@@ -9,7 +9,7 @@ interface Props {
 export default function AIMessage({ content }: Props) {
     const colorScheme = useColorScheme()
     return (
-        <View style={[styles.container, { backgroundColor: colorScheme === "dark" ? "#0f0f0f" : "#f5f5f5" }]}>
+        <View style={[styles.container, { backgroundColor: colorScheme === "dark" ? "#0f0f0f" : "#ebebeb" }]}>
             <ThemedText type="defaultSemiBold">{content}</ThemedText>
         </View>
     )

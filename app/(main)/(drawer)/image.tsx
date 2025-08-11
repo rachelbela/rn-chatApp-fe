@@ -4,7 +4,7 @@
  * @LastEditTime: 2025-08-07 17:18:41
  * @LastEditors: 
  */
-import { ThemedText } from "@/components/ThemedText";
+import ImageChatFooter from "@/components/images/ImageChatFooter";
 import { ThemedView } from "@/components/ThemedView";
 
 export default function Index() {
@@ -16,7 +16,7 @@ export default function Index() {
                 alignItems: "center",
             }}
         >
-            <ThemedText>image</ThemedText>
+            <ImageChatFooter />
         </ThemedView>
     );
 }
