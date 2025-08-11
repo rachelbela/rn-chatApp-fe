@@ -2,8 +2,7 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import { FontAwesome } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
-import { ThemedText } from '../ThemedText';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 export default function ChatHeader() {
     const themeColor = useColorScheme();
@@ -14,8 +13,8 @@ export default function ChatHeader() {
                     router.push("/vip")
                 }}>
                 <View style={styles.button}>
-                    <ThemedText type='defaultSemiBold'>vip</ThemedText>
-                    <FontAwesome name="star" size={18} color={"green"} />
+                    <Text style={styles.text}>获取vip</Text>
+                    <FontAwesome name="star" size={16} color="#5954A5" />
                 </View>
             </Pressable>
         </View>
@@ -36,6 +35,7 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 16,
-        fontWeight: "semibold"
+        fontWeight: "bold",
+        color: "#5954A5"
     }
 })

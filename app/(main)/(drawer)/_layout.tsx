@@ -45,7 +45,7 @@ export default function Layout() {
               </View>,
             headerTitle: ChatHeader,
             headerTransparent: true,
-            headerBackground: () => <BlurView tint='light' style={StyleSheet.absoluteFill}></BlurView>
+            headerBackground: () => <BlurView style={StyleSheet.absoluteFill}></BlurView>
           }}
 
         />
