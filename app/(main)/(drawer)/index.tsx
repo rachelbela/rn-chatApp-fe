@@ -8,7 +8,7 @@ import AIMessage from "@/components/chat/AIMessage";
 import ChatFooter from "@/components/chat/ChatFooter";
 import UserMessage from "@/components/chat/UserMessage";
 import { useHeaderHeight } from "@react-navigation/elements";
-import { FlatList, View } from "react-native";
+import { FlatList, KeyboardAvoidingView, Platform, View } from "react-native";
 
 const DATA = [
   {
@@ -95,24 +95,31 @@ const Item = ({ item }: { item: ItemProps }) => (
 export default function Index() {
   const HeaderHeight = useHeaderHeight()
   return (
-    <View
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={{
         flex: 1,
-      }}
-    >
-      <FlatList
-        contentContainerStyle={{
-          paddingTop: HeaderHeight,
-          paddingBottom: HeaderHeight * 1.5,
-          paddingLeft: 20,
-          paddingRight: 18,
+      }}>
+      <View
+        style={{
+          flex: 1,
         }}
-        data={DATA}
-        renderItem={({ item }) => <Item item={item} />}
-        keyExtractor={item => item.id}
-        showsVerticalScrollIndicator={false}
-      />
-      <ChatFooter />
-    </View>
+      >
+        <FlatList
+          contentContainerStyle={{
+            paddingTop: HeaderHeight,
+            paddingBottom: HeaderHeight * 1.5,
+            paddingLeft: 20,
+            paddingRight: 18,
+          }}
+          data={DATA}
+          renderItem={({ item }) => <Item item={item} />}
+          keyExtractor={item => item.id}
+          showsVerticalScrollIndicator={false}
+        />
+        <ChatFooter />
+      </View>
+    </KeyboardAvoidingView >
+
   );
 }
