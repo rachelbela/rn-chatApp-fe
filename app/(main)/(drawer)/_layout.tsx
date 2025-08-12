@@ -6,11 +6,12 @@
  */
 import ChatHeader from '@/components/chat/ChatHeader';
 import DrawerMenuButton from '@/components/ui/DrawerMenuButton';
+import { HapticsMedium } from '@/utils/Haptics';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { Drawer } from 'expo-router/drawer';
-import { Dimensions, StyleSheet, Text, View, useColorScheme } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Dimensions, StyleSheet, Text, useColorScheme } from 'react-native';
+import { GestureHandlerRootView, Pressable } from 'react-native-gesture-handler';
 const { width } = Dimensions.get('window');
 export default function Layout() {
   const colorScheme = useColorScheme();
@@ -39,10 +40,12 @@ export default function Layout() {
             drawerLabel: (props: {
               color: string;
               focused: boolean;
-            }) => <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+            }) => <Pressable style={{ flexDirection: "row", alignItems: "center", gap: 6 }} onPress={() => {
+              HapticsMedium();
+            }}>
                 {props.focused ? <FontAwesome name="home" size={24} color={props.color} /> : <Ionicons name="home-outline" size={24} color={props.color} />}
                 <Text style={{ color: props.color }}>Home</Text>
-              </View>,
+              </Pressable>,
             headerTitle: ChatHeader,
             headerTransparent: true,
             headerBackground: () => <BlurView style={StyleSheet.absoluteFill}></BlurView>
@@ -55,10 +58,12 @@ export default function Layout() {
             drawerLabel: (props: {
               color: string;
               focused: boolean;
-            }) => <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+            }) => <Pressable style={{ flexDirection: "row", alignItems: "center", gap: 6 }} onPress={() => {
+              HapticsMedium();
+            }}>
                 {props.focused ? <Ionicons name="images" size={24} color={props.color} /> : <Ionicons name="images-outline" size={24} color={props.color} />}
                 <Text style={{ color: props.color }}>Images</Text>
-              </View>,
+              </Pressable>,
             title: 'Image',
           }}
         />

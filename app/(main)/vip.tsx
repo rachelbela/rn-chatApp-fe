@@ -1,16 +1,18 @@
 import { ThemedText } from '@/components/ThemedText'
 import { ThemedView } from '@/components/ThemedView'
+import SpringPressable from '@/components/ui/SpringPressable'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { FontAwesome5, FontAwesome6, MaterialCommunityIcons, Octicons } from '@expo/vector-icons'
 import { useHeaderHeight } from '@react-navigation/elements'
-import React from 'react'
-import { Pressable, ScrollView, Text, View } from 'react-native'
+import React, { useState } from 'react'
+import { ScrollView, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function Vip() {
     const HeaderHeight = useHeaderHeight()
     const { bottom } = useSafeAreaInsets()
     const colorSchema = useColorScheme()
+    const [vip, setVip] = useState("year");
     return (
         <ThemedView style={{
             flex: 1
@@ -61,22 +63,39 @@ export default function Vip() {
                     </View>
                 </ThemedView>
                 <ThemedView style={{ flexDirection: "row", gap: 8, paddingHorizontal: 16 }}>
-                    <View style={{ flex: 1, gap: 4, padding: 8, borderRadius: 12, backgroundColor: colorSchema === "dark" ? "#1B1B1E" : "#EFEFEF", }}>
+                    <SpringPressable
+                        onPress={() => {
+                            if (vip !== "year") {
+                                setVip("year")
+                            }
+                        }}
+                        viewStyle={{ flex: 1 }}
+                        style={{ flex: 1, gap: 4, padding: 8, borderRadius: 12, backgroundColor: colorSchema === "dark" ? "#1B1B1E" : "#EFEFEF", borderWidth: vip === "year" ? 1 : 0, borderColor: "#3F4559", borderStyle: "solid" }}
+                    >
                         <FontAwesome6 name="wand-magic-sparkles" size={18} color="#5080E6" />
                         <ThemedText>年会员</ThemedText>
                         <ThemedText>300每年</ThemedText>
                         <Text style={{ color: "#5e5e5e", fontSize: 14 }}>大多数用户选择每年订阅</Text>
 
-                    </View>
-                    <View style={{ flex: 1, padding: 8, borderRadius: 12, backgroundColor: colorSchema === "dark" ? "#1B1B1E" : "#EFEFEF", gap: 8, borderWidth: 1, borderColor: "#3F4559", borderStyle: "solid" }}>
+                    </SpringPressable>
+                    <SpringPressable
+                        onPress={() => {
+                            if (vip !== "month") {
+                                setVip("month")
+                            }
+                        }}
+                        onPressOut={()=>{console.log("press out")}}
+                        viewStyle={{ flex: 1 }}
+                        style={{ flex: 1, gap: 4, padding: 8, borderRadius: 12, backgroundColor: colorSchema === "dark" ? "#1B1B1E" : "#EFEFEF", borderWidth: vip === "month" ? 1 : 0, borderColor: "#3F4559", borderStyle: "solid" }}>
                         <FontAwesome6 name="bolt-lightning" size={18} color={colorSchema === "dark" ? "white" : "black"} />
                         <ThemedText>月会员</ThemedText>
                         <ThemedText>30每月</ThemedText>
                         <Text style={{ color: "#5e5e5e", fontSize: 14 }}>适合有专业需求的个人</Text>
-                    </View>
+                    </SpringPressable>
                 </ThemedView>
             </ScrollView>
-            <Pressable
+            <SpringPressable
+                viewStyle={{ flex: 1 }}
                 onPress={() => {
                     console.log("click")
                 }}
@@ -93,7 +112,7 @@ export default function Vip() {
                     alignItems: "center"
                 }}>
                 <Text style={{ color: "white", fontSize: 18 }}>加入Saaas</Text>
-            </Pressable>
+            </SpringPressable>
         </ThemedView>
     )
 }
