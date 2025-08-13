@@ -7,6 +7,7 @@
 import AIMessage from "@/components/chat/AIMessage";
 import ChatFooter from "@/components/chat/ChatFooter";
 import UserMessage from "@/components/chat/UserMessage";
+import { ChatMessageItem } from "@/types/chat";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { FlatList, KeyboardAvoidingView, Platform, View } from "react-native";
 
@@ -19,7 +20,8 @@ const DATA = [
   {
     id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
     role: 'AI',
-    content: 'AI Message'
+    content: 'AI Message',
+    think: "sfdjsakfjdsalfkdsajfldakj"
   },
   {
     id: '58694a0f-3da1-471f-bd96-145571e29d72',
@@ -87,10 +89,9 @@ const DATA = [
     content: 'User Message'
   },
 ];
-type ItemProps = { id: string, role: string; content: string; };
 
-const Item = ({ item }: { item: ItemProps }) => (
-  item.role === "user" ? <UserMessage content={item.content} /> : <AIMessage content={item.content} />
+const Item = ({ item }: { item: ChatMessageItem }) => (
+  item.role === "user" ? <UserMessage content={item.content} /> : <AIMessage item={item} />
 );
 export default function Index() {
   const HeaderHeight = useHeaderHeight()

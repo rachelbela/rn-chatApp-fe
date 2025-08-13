@@ -1,4 +1,5 @@
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { HapticsMedium } from '@/utils/Haptics';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import React, { useState } from 'react';
@@ -12,9 +13,10 @@ export default function VoicePressable() {
   return (
     <>
       <Pressable onPress={() => {
+        HapticsMedium();
         setModalVisible(true);
       }}>
-        <MaterialIcons name="keyboard-voice" size={20} color={colorScheme === "dark" ? "white" : "black"} />
+        <MaterialIcons name="keyboard-voice" size={24} color={colorScheme === "dark" ? "white" : "black"} />
       </Pressable>
       <Modal
         animationType="fade"
