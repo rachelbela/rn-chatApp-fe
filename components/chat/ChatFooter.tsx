@@ -1,6 +1,7 @@
 import AddSvg from "@/assets/icons/add.svg";
 import UpSvg from "@/assets/icons/up.svg";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { HapticsMedium } from "@/utils/Haptics";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { BlurView } from 'expo-blur';
 import React, { useState } from 'react';
@@ -39,7 +40,10 @@ export default function ChatFooter() {
             </View>
             <View style={styles.secondRow}>
                 <Animated.View style={[thinkAnimatedStyle]}>
-                    <Pressable onPress={() => setThinkFlag(!thinkFlag)}>
+                    <Pressable onPress={() => {
+                        HapticsMedium();
+                        setThinkFlag(!thinkFlag)
+                    }}>
                         {!thinkFlag ? <MaterialCommunityIcons name="lightbulb-on-outline" size={24} color={colorScheme === "dark" ? "white" : "black"} /> : <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 3 }}>
                             <MaterialCommunityIcons name="lightbulb-on" size={24} color="#18a9ed" />
                             <Text style={{
@@ -51,7 +55,10 @@ export default function ChatFooter() {
                     </Pressable>
                 </Animated.View>
                 <Animated.View style={[webAnimatedStyle]}>
-                    <Pressable onPress={() => setWebFlag(!webFlag)}>
+                    <Pressable onPress={() => {
+                        HapticsMedium();
+                        setWebFlag(!webFlag)
+                    }}>
                         {!webFlag ? <MaterialCommunityIcons name="web" size={24} color={colorScheme === "dark" ? "white" : "black"} /> : <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 3 }}>
                             <MaterialCommunityIcons name="web" size={24} color="#18a9ed" />
                             <Text style={{
