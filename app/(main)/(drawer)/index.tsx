@@ -35,58 +35,14 @@ const DATA: ChatMessage[] = [
   },
   {
     id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f6dd3',
-    role: 'AI',
-    content: 'AI Message'
+    role: 'user',
+    content: '北京天气'
   },
   {
     id: '58694a0f-3da1-471f-bd96-145571e29ddd72',
-    role: 'user',
-    content: 'User Message'
-  },
-  {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abbs28ba',
-    role: 'user',
-    content: 'User Message'
-  },
-  {
-    id: '3ac68afc-c605-48d3-a4f8-fbsd91aa97f63',
     role: 'AI',
-    content: 'AI Message'
-  },
-  {
-    id: '58694a0f-3da1-471f-bd96-14s5571e29d72',
-    role: 'user',
-    content: 'User Message'
-  },
-  {
-    id: 'bd7acbea-c1b1-46c2-saed5-3ad53abb28ba',
-    role: 'user',
-    content: 'User Message'
-  },
-  {
-    id: '3ac68afc-c605-48d3s-a4f8-fbd91aa97f63',
-    role: 'AI',
-    content: 'AI Message'
-  },
-  {
-    id: '58694a0f-3da1-471fs-bd96-145571e29d72',
-    role: 'user',
-    content: 'User Message'
-  },
-  {
-    id: 'bd7sacbea-c1b1-46c2-aed5-3ad53abb28ba',
-    role: 'user',
-    content: 'User Message'
-  },
-  {
-    id: '3ac6s8afc-c605-48d3-a4f8-fbd91aa97f63',
-    role: 'AI',
-    content: 'AI Message'
-  },
-  {
-    id: '58694as0f-3da1-471f-bd96-145571e29d72',
-    role: 'user',
-    content: 'User Message'
+    tool: "get_local_weather",
+    content: '北京今起至下周一最高气温将维持在20°C以上，今天（3月19日）晴朗继续，白天最高气温升至20°C。但夜间最低气温仅5°C，昼夜温差大，注意调整着装。'
   },
 ];
 

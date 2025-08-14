@@ -3,5 +3,5 @@ export interface ChatMessage {
     role: string;
     content: string;
     think?: string;
-    tool?: "get_stock_price",
+    tool?: string,
 };
