@@ -77,9 +77,6 @@ export default function ChatFooter() {
 
 const styles = StyleSheet.create({
     container: {
-        position: "absolute",
-        bottom: 0,
-        width: "100%",
         paddingHorizontal: 8,
         paddingTop: 8,
         flexDirection: "column",

@@ -6,8 +6,10 @@
  */
 import ChatFooter from "@/components/chat/ChatFooter";
 import ChatMessageItem from "@/components/chat/ChatMessageItem";
+import ScrollToBottomButton from "@/components/ui/ScrollToBottomButton";
 import { ChatMessage } from "@/types/chat";
 import { useHeaderHeight } from "@react-navigation/elements";
+import { useRef, useState } from "react";
 import { FlatList, KeyboardAvoidingView, Platform, View } from "react-native";
 
 const DATA: ChatMessage[] = [
@@ -48,6 +50,11 @@ const DATA: ChatMessage[] = [
 
 export default function Index() {
   const HeaderHeight = useHeaderHeight()
+  const flatListRef = useRef<FlatList>(null);
+  const [showScrollToBottomButton, setShowScrollToBottomButton] = useState(false);
+  const handleScrollToBottom = () => {
+    flatListRef.current?.scrollToOffset({ offset: 9999 })
+  }
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -60,6 +67,7 @@ export default function Index() {
         }}
       >
         <FlatList
+          ref={flatListRef}
           contentContainerStyle={{
             paddingTop: HeaderHeight,
             paddingBottom: HeaderHeight * 1.5,
@@ -67,12 +75,34 @@ export default function Index() {
             paddingRight: 18,
             gap: 24
           }}
+          onContentSizeChange={() => {
+            if (!showScrollToBottomButton) {
+              handleScrollToBottom();
+            }
+          }}
           data={DATA}
           renderItem={({ item }) => <ChatMessageItem item={item} />}
           keyExtractor={item => item.id}
           showsVerticalScrollIndicator={false}
+          onScroll={event => {
+            const { contentSize, contentOffset, layoutMeasurement } = event.nativeEvent;
+            if (contentSize.height - contentOffset.y - layoutMeasurement.height > 1) {
+              setShowScrollToBottomButton(true)
+            } else {
+              setShowScrollToBottomButton(false)
+
+            }
+          }}
         />
-        <ChatFooter />
+        <View style={{
+          position: "absolute",
+          bottom: 0,
+          width: "100%",
+          gap: 8
+        }}>
+          <ScrollToBottomButton showScrollToBottomButton={showScrollToBottomButton} handleScrollToBottom={handleScrollToBottom} />
+          <ChatFooter />
+        </View>
       </View>
     </KeyboardAvoidingView >
 
