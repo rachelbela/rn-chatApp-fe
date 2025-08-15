@@ -10,6 +10,7 @@ import Markdown from 'react-native-markdown-display';
 import { RFValue } from "react-native-responsive-fontsize";
 import { atomOneDark, atomOneLight } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { ThemedText } from '../ThemedText';
+import ChatLoadingDot from './ChatLoadingDot';
 
 interface Props {
     item: ChatMessage;
@@ -92,6 +93,7 @@ export default function AIMessage({ item }: Props) {
 
             return (
                 <CodeHighlighter
+                    key={node.key}
                     hljsStyle={colorScheme === "dark" ? atomOneDark : atomOneLight}
                     containerStyle={{
                         width: "100%",
@@ -120,9 +122,9 @@ export default function AIMessage({ item }: Props) {
             ) {
                 content = node.content.substring(0, node.content.length - 1);
             }
-            console.log("node", node)
             return (
                 <CodeHighlighter
+                    key={node.key}
                     hljsStyle={colorScheme === "dark" ? atomOneDark : atomOneLight}
                     containerStyle={{
                         width: "100%",
@@ -140,6 +142,7 @@ export default function AIMessage({ item }: Props) {
                 </CodeHighlighter>
             );
         },
+
     };
 
     return (
@@ -263,8 +266,9 @@ export default function AIMessage({ item }: Props) {
                     </View>
                 </View>
             }
+            {item.loading && <ChatLoadingDot />}
             <ThemedText type="defaultSemiBold">
-                <Markdown rules={rules} debugPrintTree>
+                <Markdown rules={rules} >
                     {item.content}
                 </Markdown>
             </ThemedText>

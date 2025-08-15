@@ -1,8 +1,7 @@
 import AddSvg from "@/assets/icons/add.svg";
-import UpSvg from "@/assets/icons/up.svg";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { HapticsMedium } from "@/utils/Haptics";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { HapticsMedium, HapticsSoft } from "@/utils/Haptics";
+import { AntDesign, FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import { BlurView } from 'expo-blur';
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
@@ -10,11 +9,16 @@ import Animated, { useAnimatedStyle, withSpring } from "react-native-reanimated"
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import VoicePressable from "./VoicePressable";
 
-export default function ChatFooter() {
+interface Props {
+    handleSend: (prompt: string) => void;
+    working: boolean;
+}
+export default function ChatFooter({ handleSend, working }: Props) {
     const { bottom } = useSafeAreaInsets()
     const colorScheme = useColorScheme()
     const [thinkFlag, setThinkFlag] = useState(false);
     const [webFlag, setWebFlag] = useState(false)
+    const [prompt, setPrompt] = useState("");
     const thinkAnimatedStyle = useAnimatedStyle(() => ({
         transform: [{ scale: withSpring(thinkFlag ? 1.1 : 1, { mass: 10 }) }]
     }))
@@ -27,6 +31,8 @@ export default function ChatFooter() {
             <View style={styles.firstRow}>
                 <AddSvg style={{ width: 24, height: 24 }} color={colorScheme === "dark" ? "white" : "black"} />
                 <TextInput
+                    value={prompt}
+                    onChangeText={setPrompt}
                     placeholderTextColor={"gray"}
                     placeholder='send'
                     multiline
@@ -36,7 +42,15 @@ export default function ChatFooter() {
                         color: colorScheme === "dark" ? "white" : "black"
                     }]}
                 />
-                <UpSvg style={{ width: 24, height: 24 }} color={colorScheme === "dark" ? "white" : "black"} />
+                {working ? <FontAwesome name="stop-circle" size={24} color={colorScheme === "dark" ? "white" : "black"} /> : <Pressable onPress={() => {
+                    if (!prompt.trim()) return;
+                    HapticsSoft();
+                    console.log("propmt==", prompt)
+                    handleSend(prompt);
+                    setPrompt("");
+                }}>
+                    <AntDesign name="upcircle" size={24} color={colorScheme === "dark" ? "white" : "black"} />
+                </Pressable>}
             </View>
             <View style={styles.secondRow}>
                 <Animated.View style={[thinkAnimatedStyle]}>

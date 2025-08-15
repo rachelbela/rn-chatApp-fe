@@ -11,6 +11,8 @@ import { ChatMessage } from "@/types/chat";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useRef, useState } from "react";
 import { FlatList, KeyboardAvoidingView, Platform, View } from "react-native";
+import 'react-native-get-random-values';
+import { v4 as uuidv4 } from 'uuid';
 
 const DATA: ChatMessage[] = [
   {
@@ -173,16 +175,6 @@ Links
 
   Autoconverted link https://www.google.com (enable linkify to see)
 
-
-Images
-
-  ![Minion](https://octodex.github.com/images/minion.png)
-  ![Stormtroopocat](https://octodex.github.com/images/stormtroopocat.jpg "The Stormtroopocat")
-
-  Like links, Images also have a footnote style syntax
-
-  ![Alt text][id]
-
   With a reference later in the document defining the URL location:
 
   [id]: https://octodex.github.com/images/dojocat.jpg  "The Dojocat"
@@ -203,11 +195,37 @@ Typographic Replacements
 ];
 
 export default function Index() {
+  const [messages, setMessages] = useState<ChatMessage[]>(DATA)
   const HeaderHeight = useHeaderHeight()
   const flatListRef = useRef<FlatList>(null);
   const [showScrollToBottomButton, setShowScrollToBottomButton] = useState(false);
   const handleScrollToBottom = () => {
     flatListRef.current?.scrollToOffset({ offset: 9999 })
+  }
+  const [working, setWorking] = useState(false);
+
+  const handleSend = async (propmt: string) => {
+    setWorking(true);
+    addMessage(propmt);
+    await new Promise(res => setTimeout(res, 1000))
+    setMessages(prev => {
+      const newMesssages = [...prev];
+      const lastIndex = newMesssages.length - 1;
+      newMesssages[lastIndex] = {
+        ...newMesssages[lastIndex],
+        loading: false,
+        content: "AI reply message"
+      }
+      return newMesssages
+    })
+    setWorking(false);
+
+  }
+
+  const addMessage = (prompt: string) => {
+    const userMessage = { id: uuidv4(), role: "user", content: prompt };
+    const AIMessage = { id: uuidv4(), role: "AI", loading: true };
+    setMessages(prev => ([...prev, userMessage, AIMessage]))
   }
   return (
     <KeyboardAvoidingView
@@ -234,7 +252,7 @@ export default function Index() {
               handleScrollToBottom();
             }
           }}
-          data={DATA}
+          data={messages}
           renderItem={({ item }) => <ChatMessageItem item={item} />}
           keyExtractor={item => item.id}
           showsVerticalScrollIndicator={false}
@@ -255,7 +273,7 @@ export default function Index() {
           gap: 8
         }}>
           <ScrollToBottomButton showScrollToBottomButton={showScrollToBottomButton} handleScrollToBottom={handleScrollToBottom} />
-          <ChatFooter />
+          <ChatFooter handleSend={handleSend} working={working} />
         </View>
       </View>
     </KeyboardAvoidingView >

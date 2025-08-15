@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { ThemedText } from '../ThemedText';
 
 interface Props {
-    content: string;
+    content?: string;
 }
 export default function UserMessage({ content }: Props) {
     const colorScheme = useColorScheme()

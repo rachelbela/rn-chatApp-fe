@@ -1,7 +1,8 @@
 export interface ChatMessage {
     id: string;
     role: string;
-    content: string;
+    content?: string;
     think?: string;
-    tool?: string,
+    tool?: string;
+    loading?: boolean;
 };
