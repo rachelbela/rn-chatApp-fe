@@ -1,4 +1,3 @@
-import AddSvg from "@/assets/icons/add.svg";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { HapticsMedium, HapticsSoft } from "@/utils/Haptics";
 import { AntDesign, FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -7,6 +6,7 @@ import React, { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import Animated, { useAnimatedStyle, withSpring } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import PlusModalPressable from "./PlusModalPressable";
 import VoicePressable from "./VoicePressable";
 
 interface Props {
@@ -19,6 +19,7 @@ export default function ChatFooter({ handleSend, working }: Props) {
     const [thinkFlag, setThinkFlag] = useState(false);
     const [webFlag, setWebFlag] = useState(false)
     const [prompt, setPrompt] = useState("");
+    const [showModal, setShowModal] = useState(false);
     const thinkAnimatedStyle = useAnimatedStyle(() => ({
         transform: [{ scale: withSpring(thinkFlag ? 1.1 : 1, { mass: 10 }) }]
     }))
@@ -29,7 +30,7 @@ export default function ChatFooter({ handleSend, working }: Props) {
     return (
         <BlurView style={[styles.container, { paddingBottom: bottom, }]}>
             <View style={styles.firstRow}>
-                <AddSvg style={{ width: 24, height: 24 }} color={colorScheme === "dark" ? "white" : "black"} />
+                <PlusModalPressable showModal={showModal} setShowModal={setShowModal} />
                 <TextInput
                     value={prompt}
                     onChangeText={setPrompt}
