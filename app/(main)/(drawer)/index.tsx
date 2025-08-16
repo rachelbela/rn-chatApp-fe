@@ -10,8 +10,8 @@ import ScrollToBottomButton from "@/components/ui/ScrollToBottomButton";
 import { ChatMessage } from "@/types/chat";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { fetch } from 'expo/fetch';
-import { useRef, useState } from "react";
-import { FlatList, KeyboardAvoidingView, Platform, View } from "react-native";
+import { useCallback, useRef, useState } from "react";
+import { FlatList, KeyboardAvoidingView, NativeScrollEvent, NativeSyntheticEvent, Platform, View } from "react-native";
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -200,9 +200,9 @@ export default function Index() {
   const HeaderHeight = useHeaderHeight()
   const flatListRef = useRef<FlatList>(null);
   const [showScrollToBottomButton, setShowScrollToBottomButton] = useState(false);
-  const handleScrollToBottom = () => {
+  const handleScrollToBottom = useCallback(() => {
     flatListRef.current?.scrollToOffset({ offset: 9999 })
-  }
+  }, [])
   const [working, setWorking] = useState(false);
 
   const handleSend = async (prompt: string) => {
@@ -210,7 +210,7 @@ export default function Index() {
     addMessage(prompt);
     const requestMessage = buildRequestMessage(prompt);
     try {
-      const resp = await fetch('ht tp://localhost:8787/chat', {
+      const resp = await fetch('http://localhost:8787/chat', {
         method: "POST",
         body: JSON.stringify({
           messages: requestMessage
@@ -287,6 +287,20 @@ export default function Index() {
     const AIMessage = { id: uuidv4(), role: "assistant", loading: true };
     setMessages(prev => ([...prev, userMessage, AIMessage]))
   }
+
+  const handleOnScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const { contentSize, contentOffset, layoutMeasurement } = event.nativeEvent;
+    const show = contentSize.height - contentOffset.y - layoutMeasurement.height > 50
+    if (showScrollToBottomButton !== show) {
+      setShowScrollToBottomButton(show)
+    }
+  }, [showScrollToBottomButton])
+
+  const handleOnContentSizeChange = useCallback(() => {
+    if (!showScrollToBottomButton) {
+      handleScrollToBottom();
+    }
+  }, [showScrollToBottomButton, handleScrollToBottom])
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -307,24 +321,13 @@ export default function Index() {
             paddingRight: 18,
             gap: 24
           }}
-          onContentSizeChange={() => {
-            if (!showScrollToBottomButton) {
-              handleScrollToBottom();
-            }
-          }}
+          onContentSizeChange={handleOnContentSizeChange}
           data={messages}
           renderItem={({ item }) => <ChatMessageItem item={item} />}
           keyExtractor={item => item.id}
           showsVerticalScrollIndicator={false}
-          onScroll={event => {
-            const { contentSize, contentOffset, layoutMeasurement } = event.nativeEvent;
-            if (contentSize.height - contentOffset.y - layoutMeasurement.height > 1) {
-              setShowScrollToBottomButton(true)
-            } else {
-              setShowScrollToBottomButton(false)
-
-            }
-          }}
+          onScroll={handleOnScroll}
+          scrollEventThrottle={16}
         />
         <View style={{
           position: "absolute",

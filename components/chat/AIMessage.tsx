@@ -270,6 +270,7 @@ export default function AIMessage({ item }: Props) {
                 <Markdown rules={rules} >
                     {item.content}
                 </Markdown>
+                {/* {item.content} */}
                 {item.loading && <ChatLoadingDot />}
             </ThemedText>
         </View>
