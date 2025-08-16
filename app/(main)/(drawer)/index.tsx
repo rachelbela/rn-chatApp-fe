@@ -206,11 +206,72 @@ export default function Index() {
   const [working, setWorking] = useState(false);
 
   const handleSend = async (prompt: string) => {
-    console.log("enter handleSend", prompt)
     setWorking(true);
     addMessage(prompt);
-    console.log("requestMessage")
-    const requestMessage = [...messages.map(item => ({ role: item.role, content: [{ type: "text", text: item.content }] })), {
+    const requestMessage = buildRequestMessage(prompt);
+    try {
+      const resp = await fetch('ht tp://localhost:8787/chat', {
+        method: "POST",
+        body: JSON.stringify({
+          messages: requestMessage
+        }),
+        headers: { Accept: 'text/event-stream' },
+      });
+      if (!resp.ok || !resp.body) {
+        throw new Error("服务端错误，请重试")
+      }
+      // @ts-ignore
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      let content = ""
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) {
+          console.log("流结束了")
+          setWorking(false);
+          setMessages(prev => {
+            const newMesssages = [...prev];
+            const lastIndex = newMesssages.length - 1;
+            newMesssages[lastIndex] = {
+              ...newMesssages[lastIndex],
+              loading: false,
+            }
+            return newMesssages
+          })
+          break;
+        }
+        const text = decoder.decode(value, { stream: true })
+        content += text
+        console.log("流响应", text)
+        setMessages(prev => {
+          const newMesssages = [...prev];
+          const lastIndex = newMesssages.length - 1;
+          newMesssages[lastIndex] = {
+            ...newMesssages[lastIndex],
+            content: content
+          }
+          return newMesssages
+        })
+      }
+    } catch (e) {
+      setWorking(false);
+      setMessages(prev => {
+        const newMesssages = [...prev];
+        const lastIndex = newMesssages.length - 1;
+        newMesssages[lastIndex] = {
+          ...newMesssages[lastIndex],
+          loading: false,
+          content: "服务端错误，请重试"
+        }
+        return newMesssages
+      })
+    }
+
+
+  }
+
+  const buildRequestMessage = (prompt: string) => {
+    return [...messages.map(item => ({ role: item.role, content: [{ type: "text", text: item.content }] })), {
       role: "user",
       content: [
         {
@@ -218,57 +279,7 @@ export default function Index() {
           text: prompt
         }
       ]
-    }];
-    console.log(requestMessage)
-    const resp = await fetch('http://localhost:8787/chat', {
-      method: "POST",
-      body: JSON.stringify({
-        messages: requestMessage
-      }),
-      headers: { Accept: 'text/event-stream' },
-    });
-    if (!resp.ok) {
-      console.log("网络错误")
-      throw new Error("网络错误")
-    }
-    if (!resp.body) {
-      console.log("网络错误")
-      throw new Error("网络错误")
-    }
-    // @ts-ignore
-    const reader = resp.body.getReader();
-    const decoder = new TextDecoder();
-    let content = ""
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) {
-        console.log("流结束了")
-        setWorking(false);
-        setMessages(prev => {
-          const newMesssages = [...prev];
-          const lastIndex = newMesssages.length - 1;
-          newMesssages[lastIndex] = {
-            ...newMesssages[lastIndex],
-            loading: false,
-          }
-          return newMesssages
-        })
-        break;
-      }
-      const text = decoder.decode(value, { stream: true })
-      content += text
-      console.log("流响应", text)
-      setMessages(prev => {
-        const newMesssages = [...prev];
-        const lastIndex = newMesssages.length - 1;
-        newMesssages[lastIndex] = {
-          ...newMesssages[lastIndex],
-          content: content
-        }
-        return newMesssages
-      })
-    }
-
+    }]
   }
 
   const addMessage = (prompt: string) => {
