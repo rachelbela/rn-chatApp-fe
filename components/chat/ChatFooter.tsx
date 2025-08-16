@@ -33,7 +33,7 @@ export default function ChatFooter({ handleSend, working }: Props) {
                 <PlusModalPressable showModal={showModal} setShowModal={setShowModal} />
                 <TextInput
                     value={prompt}
-                    onChangeText={setPrompt}
+                    onChangeText={(text) => setPrompt(text)}
                     placeholderTextColor={"gray"}
                     placeholder='send'
                     multiline

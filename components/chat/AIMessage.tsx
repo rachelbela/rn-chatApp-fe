@@ -266,11 +266,11 @@ export default function AIMessage({ item }: Props) {
                     </View>
                 </View>
             }
-            {item.loading && <ChatLoadingDot />}
             <ThemedText type="defaultSemiBold">
                 <Markdown rules={rules} >
                     {item.content}
                 </Markdown>
+                {item.loading && <ChatLoadingDot />}
             </ThemedText>
         </View>
     )

@@ -9,6 +9,7 @@ import ChatMessageItem from "@/components/chat/ChatMessageItem";
 import ScrollToBottomButton from "@/components/ui/ScrollToBottomButton";
 import { ChatMessage } from "@/types/chat";
 import { useHeaderHeight } from "@react-navigation/elements";
+import { fetch } from 'expo/fetch';
 import { useRef, useState } from "react";
 import { FlatList, KeyboardAvoidingView, Platform, View } from "react-native";
 import 'react-native-get-random-values';
@@ -195,7 +196,7 @@ Typographic Replacements
 ];
 
 export default function Index() {
-  const [messages, setMessages] = useState<ChatMessage[]>(DATA)
+  const [messages, setMessages] = useState<ChatMessage[]>([])
   const HeaderHeight = useHeaderHeight()
   const flatListRef = useRef<FlatList>(null);
   const [showScrollToBottomButton, setShowScrollToBottomButton] = useState(false);
@@ -204,27 +205,75 @@ export default function Index() {
   }
   const [working, setWorking] = useState(false);
 
-  const handleSend = async (propmt: string) => {
+  const handleSend = async (prompt: string) => {
+    console.log("enter handleSend", prompt)
     setWorking(true);
-    addMessage(propmt);
-    await new Promise(res => setTimeout(res, 1000))
-    setMessages(prev => {
-      const newMesssages = [...prev];
-      const lastIndex = newMesssages.length - 1;
-      newMesssages[lastIndex] = {
-        ...newMesssages[lastIndex],
-        loading: false,
-        content: "AI reply message"
+    addMessage(prompt);
+    console.log("requestMessage")
+    const requestMessage = [...messages.map(item => ({ role: item.role, content: [{ type: "text", text: item.content }] })), {
+      role: "user",
+      content: [
+        {
+          type: "text",
+          text: prompt
+        }
+      ]
+    }];
+    console.log(requestMessage)
+    const resp = await fetch('http://localhost:8787/chat', {
+      method: "POST",
+      body: JSON.stringify({
+        messages: requestMessage
+      }),
+      headers: { Accept: 'text/event-stream' },
+    });
+    if (!resp.ok) {
+      console.log("网络错误")
+      throw new Error("网络错误")
+    }
+    if (!resp.body) {
+      console.log("网络错误")
+      throw new Error("网络错误")
+    }
+    // @ts-ignore
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let content = ""
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) {
+        console.log("流结束了")
+        setWorking(false);
+        setMessages(prev => {
+          const newMesssages = [...prev];
+          const lastIndex = newMesssages.length - 1;
+          newMesssages[lastIndex] = {
+            ...newMesssages[lastIndex],
+            loading: false,
+          }
+          return newMesssages
+        })
+        break;
       }
-      return newMesssages
-    })
-    setWorking(false);
+      const text = decoder.decode(value, { stream: true })
+      content += text
+      console.log("流响应", text)
+      setMessages(prev => {
+        const newMesssages = [...prev];
+        const lastIndex = newMesssages.length - 1;
+        newMesssages[lastIndex] = {
+          ...newMesssages[lastIndex],
+          content: content
+        }
+        return newMesssages
+      })
+    }
 
   }
 
   const addMessage = (prompt: string) => {
     const userMessage = { id: uuidv4(), role: "user", content: prompt };
-    const AIMessage = { id: uuidv4(), role: "AI", loading: true };
+    const AIMessage = { id: uuidv4(), role: "assistant", loading: true };
     setMessages(prev => ([...prev, userMessage, AIMessage]))
   }
   return (
